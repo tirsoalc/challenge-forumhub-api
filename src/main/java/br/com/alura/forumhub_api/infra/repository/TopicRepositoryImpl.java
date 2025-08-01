@@ -1,10 +1,15 @@
 package br.com.alura.forumhub_api.infra.repository;
 
+import br.com.alura.forumhub_api.domain.entity.PageRequest;
+import br.com.alura.forumhub_api.domain.entity.PageResponse;
 import br.com.alura.forumhub_api.domain.entity.Topic;
 import br.com.alura.forumhub_api.domain.enums.Status;
 import br.com.alura.forumhub_api.domain.repository.TopicRepository;
 import br.com.alura.forumhub_api.infra.persistence.entity.TopicJpaEntity;
 import br.com.alura.forumhub_api.infra.persistence.jpa.SpringTopicRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -77,5 +82,31 @@ public class TopicRepositoryImpl implements TopicRepository {
     @Override
     public boolean existsByTitleAndMessageAndIdNotEquals(String title, String message, Long id) {
         return springRepository.existsByTitleAndMessageAndIdNot(title, message, id);
+    }
+
+    @Override
+    public PageResponse<Topic> findAllOrderByCreatedAtAscWithPagination(PageRequest pageRequest) {
+        Sort.Direction direction = pageRequest.getSortDirection().equalsIgnoreCase("DESC") 
+            ? Sort.Direction.DESC : Sort.Direction.ASC;
+        
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(
+            pageRequest.getPage(), 
+            pageRequest.getSize(), 
+            Sort.by(direction, pageRequest.getSortBy())
+        );
+        
+        Page<TopicJpaEntity> page = springRepository.findAllByOrderByCreatedAtAsc(pageable);
+        
+        List<Topic> topics = page.getContent()
+                .stream()
+                .map(TopicJpaEntity::toDomain)
+                .toList();
+                
+        return new PageResponse<>(
+            topics, 
+            page.getNumber(), 
+            page.getSize(), 
+            page.getTotalElements()
+        );
     }
 }

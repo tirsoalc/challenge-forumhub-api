@@ -1,5 +1,7 @@
 package br.com.alura.forumhub_api.application.usecase;
 
+import br.com.alura.forumhub_api.domain.entity.PageRequest;
+import br.com.alura.forumhub_api.domain.entity.PageResponse;
 import br.com.alura.forumhub_api.domain.entity.Topic;
 import br.com.alura.forumhub_api.domain.repository.TopicRepository;
 import org.springframework.stereotype.Service;
@@ -28,5 +30,9 @@ public class ListTopicsUseCase {
     
     public List<Topic> executeByCourseAndYear(String courseName, int year) {
         return topicRepository.findByCourseNameAndYear(courseName, year);
+    }
+    
+    public PageResponse<Topic> executeWithPagination(PageRequest pageRequest) {
+        return topicRepository.findAllOrderByCreatedAtAscWithPagination(pageRequest);
     }
 }

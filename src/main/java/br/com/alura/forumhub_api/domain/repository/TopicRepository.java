@@ -1,5 +1,7 @@
 package br.com.alura.forumhub_api.domain.repository;
 
+import br.com.alura.forumhub_api.domain.entity.PageRequest;
+import br.com.alura.forumhub_api.domain.entity.PageResponse;
 import br.com.alura.forumhub_api.domain.entity.Topic;
 import br.com.alura.forumhub_api.domain.enums.Status;
 
@@ -16,4 +18,5 @@ public interface TopicRepository {
     void deleteById(Long id);
     boolean existsByTitleAndMessage(String title, String message);
     boolean existsByTitleAndMessageAndIdNotEquals(String title, String message, Long id);
+    PageResponse<Topic> findAllOrderByCreatedAtAscWithPagination(PageRequest pageRequest);
 }

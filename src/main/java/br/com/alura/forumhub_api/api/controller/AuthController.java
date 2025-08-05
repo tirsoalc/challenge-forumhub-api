@@ -2,6 +2,8 @@ package br.com.alura.forumhub_api.api.controller;
 
 import br.com.alura.forumhub_api.api.dto.request.LoginRequest;
 import br.com.alura.forumhub_api.api.dto.response.TokenResponse;
+import br.com.alura.forumhub_api.application.service.TokenService;
+import br.com.alura.forumhub_api.infra.security.UserPrincipal;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
 
-    public AuthController(AuthenticationManager authenticationManager) {
+    public AuthController(AuthenticationManager authenticationManager, TokenService tokenService) {
         this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
     }
 
     @PostMapping
@@ -32,9 +36,10 @@ public class AuthController {
 
         Authentication authentication = authenticationManager.authenticate(authToken);
 
-        // TODO: gerar o token jwt com no token service;
-        // retornando um placeholder por enquanto
-        TokenResponse tokenResponse = new TokenResponse("placeholder-token", 3600L);
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        String token = tokenService.generateToken(userPrincipal.getUser());
+        
+        TokenResponse tokenResponse = new TokenResponse(token, tokenService.getExpirationTime());
         
         return ResponseEntity.ok(tokenResponse);
     }

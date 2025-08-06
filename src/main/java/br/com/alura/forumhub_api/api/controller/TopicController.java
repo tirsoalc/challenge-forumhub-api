@@ -96,7 +96,7 @@ public class TopicController {
     }
     
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("@topicSecurityService.canEditTopic(#id)")
     public ResponseEntity<TopicResponse> updateTopic(@PathVariable Long id, 
                                                     @RequestBody @Valid UpdateTopicRequest request) {
         Topic updatedTopic = updateTopicUseCase.execute(id, request);

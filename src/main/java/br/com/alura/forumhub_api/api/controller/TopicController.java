@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -42,6 +43,7 @@ public class TopicController {
     }
     
     @PostMapping
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<TopicResponse> createTopic(@RequestBody @Valid CreateTopicRequest request,
                                                     UriComponentsBuilder uriBuilder) {
         Topic createdTopic = createTopicUseCase.execute(request);
@@ -55,6 +57,7 @@ public class TopicController {
     }
     
     @GetMapping
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<PageResponse<TopicListResponse>> listTopicsWithPagination(
             @PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
         
@@ -85,6 +88,7 @@ public class TopicController {
     }
     
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<TopicResponse> getTopicById(@PathVariable Long id) {
         Topic topic = getTopicByIdUseCase.execute(id);
         TopicResponse response = TopicResponse.fromDomain(topic);
@@ -92,6 +96,7 @@ public class TopicController {
     }
     
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<TopicResponse> updateTopic(@PathVariable Long id, 
                                                     @RequestBody @Valid UpdateTopicRequest request) {
         Topic updatedTopic = updateTopicUseCase.execute(id, request);
@@ -100,12 +105,14 @@ public class TopicController {
     }
     
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteTopic(@PathVariable Long id) {
         deleteTopicUseCase.execute(id);
         return ResponseEntity.noContent().build();
     }
     
     @GetMapping("/all")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<TopicListResponse>> listAllTopics() {
         List<Topic> topics = listTopicsUseCase.execute();
         List<TopicListResponse> response = topics.stream()
@@ -115,6 +122,7 @@ public class TopicController {
     }
     
     @GetMapping("/limited")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<TopicListResponse>> listTopicsWithLimit(
             @RequestParam(defaultValue = "10") int limit) {
         List<Topic> topics = listTopicsUseCase.executeWithLimit(limit);
@@ -125,6 +133,7 @@ public class TopicController {
     }
     
     @GetMapping("/search")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<TopicListResponse>> listTopicsByCourseAndYear(
             @RequestParam String curso,
             @RequestParam Integer ano) {

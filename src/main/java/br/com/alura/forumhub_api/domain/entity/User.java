@@ -1,6 +1,5 @@
 package br.com.alura.forumhub_api.domain.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +22,13 @@ public class User {
         this.email = email;
         this.password = password;
         this.roles = new ArrayList<>();
+    }
+
+    public User(String name, String email, String password, List<Role> roles) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.roles = roles != null ? new ArrayList<>(roles) : new ArrayList<>();
     }
 
     public User(Long id, String name, String email, String password, List<Role> roles) {

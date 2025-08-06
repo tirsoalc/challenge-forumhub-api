@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 @Table(name = "users")
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class UserJpaEntity {
     @Id

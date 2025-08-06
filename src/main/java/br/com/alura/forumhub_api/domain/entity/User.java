@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class User {
     private Long id;

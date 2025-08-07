@@ -2,12 +2,14 @@ package br.com.alura.forumhub_api.api.controller;
 
 import br.com.alura.forumhub_api.api.dto.request.CreateTopicRequest;
 import br.com.alura.forumhub_api.api.dto.request.UpdateTopicRequest;
+import br.com.alura.forumhub_api.api.dto.response.TopicDetailsResponse;
 import br.com.alura.forumhub_api.api.dto.response.TopicListResponse;
 import br.com.alura.forumhub_api.api.dto.response.TopicResponse;
 import br.com.alura.forumhub_api.application.usecase.*;
 import br.com.alura.forumhub_api.domain.entity.PageRequest;
 import br.com.alura.forumhub_api.domain.entity.PageResponse;
 import br.com.alura.forumhub_api.domain.entity.Topic;
+import br.com.alura.forumhub_api.domain.entity.TopicWithReplies;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -89,9 +91,9 @@ public class TopicController {
     
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<TopicResponse> getTopicById(@PathVariable Long id) {
-        Topic topic = getTopicByIdUseCase.execute(id);
-        TopicResponse response = TopicResponse.fromDomain(topic);
+    public ResponseEntity<TopicDetailsResponse> getTopicById(@PathVariable Long id) {
+        TopicWithReplies topicWithReplies = getTopicByIdUseCase.execute(id);
+        TopicDetailsResponse response = TopicDetailsResponse.fromDomain(topicWithReplies);
         return ResponseEntity.ok(response);
     }
     

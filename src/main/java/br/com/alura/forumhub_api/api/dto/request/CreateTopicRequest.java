@@ -10,9 +10,6 @@ public record CreateTopicRequest(
         @NotBlank(message = "Mensagem é obrigatória")
         String message,
         
-        @NotNull(message = "ID do autor é obrigatório")
-        Long authorId,
-        
         @NotNull(message = "ID do curso é obrigatório")
         Long courseId
 ) {

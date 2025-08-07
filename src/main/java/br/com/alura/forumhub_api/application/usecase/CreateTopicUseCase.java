@@ -7,6 +7,8 @@ import br.com.alura.forumhub_api.domain.entity.User;
 import br.com.alura.forumhub_api.domain.repository.CourseRepository;
 import br.com.alura.forumhub_api.domain.repository.TopicRepository;
 import br.com.alura.forumhub_api.domain.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,7 +28,7 @@ public class CreateTopicUseCase {
     
     public Topic execute(CreateTopicRequest request) {
         validateTopicDoesNotExist(request.title(), request.message());
-        User author = findAuthorById(request.authorId());
+        User author = getAuthenticatedUser();
         Course course = findCourseById(request.courseId());
         
         Topic topic = new Topic(request.title(), request.message(), author, course);
@@ -39,9 +41,12 @@ public class CreateTopicUseCase {
         }
     }
     
-    private User findAuthorById(Long authorId) {
-        return userRepository.findById(authorId)
-                .orElseThrow(() -> new IllegalArgumentException("Autor não encontrado"));
+    private User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        
+        return userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário autenticado não encontrado"));
     }
     
     private Course findCourseById(Long courseId) {
